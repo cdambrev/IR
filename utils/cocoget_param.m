@@ -10,7 +10,28 @@ if ~isa(Parameter, 'char')
     error('The parameter name must be a string.');
 end
 
-if isa(Object, 'char')
+
+if isa(Object, 'cell')
+    ParamValue = {};
+    for j=1:numel(Object)
+        path = strsplit(Object{j}, filesep);
+        Object_search = ir_struct;
+        for i=1:numel(path)-1
+            try
+                Object_search = Object_search.(IRUtils.name_format(path{i})).Content;
+            catch
+                error(['error, reference to non-existent field : ', IRUtils.name_format(path{i})]);
+            end
+        end
+        if ~isfield(Object_search, IRUtils.name_format(path{numel(path)}))
+            error(['error, reference to non-existent field : ', IRUtils.name_format(path{numel(path)})]);
+        elseif ~isfield(Object_search.(IRUtils.name_format(path{numel(path)})), Parameter)
+            error(['error, reference to non-existent field : ', Parameter]);
+        else
+            ParamValue = [ ParamValue Object_search.(IRUtils.name_format(path{numel(path)})).(Parameter)];
+        end
+    end
+elseif isa(Object, 'char')
     path = strsplit(Object, filesep);
     Object_search = ir_struct;
     for i=1:numel(path)-1
@@ -23,7 +44,7 @@ if isa(Object, 'char')
     if ~isfield(Object_search, IRUtils.name_format(path{numel(path)}))
         error(['error, reference to non-existent field : ', IRUtils.name_format(path{numel(path)})]);
     elseif ~isfield(Object_search.(IRUtils.name_format(path{numel(path)})), Parameter)
-                error(['error, reference to non-existent field : ', Parameter]);
+        error(['error, reference to non-existent field : ', Parameter]);
     else
         ParamValue = Object_search.(IRUtils.name_format(path{numel(path)})).(Parameter);
     end
