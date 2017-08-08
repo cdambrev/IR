@@ -53,19 +53,20 @@ for i=1:numel(content)
     sub_type = get_param(content{i}, 'BlockType');
     Common = common_struct(content{i});
     if strcmp(get_param(content{i}, 'Mask'), 'on')
-        % masked subsystems
         mask_type = get_param(content{i}, 'MaskType');
+        % masked subsystems
         SpecificParameters = specific_parameters_struct(content{i}, mask_type);
+    elseif strcmp(sub_type, 'SubSystem')
+        mask_type = get_param(content{i}, 'MaskType');
+        SpecificParameters = specific_parameters_struct(content{i}, sub_type);
     else
-        % subsystems not masked or block_diagram
         SpecificParameters = specific_parameters_struct(content{i}, sub_type);
     end
+    
     S.(sub_name) = catstruct(Common, SpecificParameters);
     handle_struct_map(get_param(content{i}, 'Handle')) = S.(sub_name);
-    if strcmp(sub_type, 'SubSystem')
-        if strcmp(get_param(content{i}, 'Mask'), 'on')
-            S.(sub_name).MaskType = mask_type;
-        end
+    if strcmp(sub_type, 'SubSystem') || strcmp(get_param(content{i}, 'Mask'), 'on')
+        S.(sub_name).MaskType = mask_type;
         [S.(sub_name).Content, next_blocks, next_subsyst, handle_struct_map_next] = subsystems_struct(content{i}, true);
         all_blocks = [all_blocks, next_blocks];
         subsyst_blocks = [subsyst_blocks, next_subsyst];
