@@ -29,6 +29,7 @@ S.CompiledSampleTime = get_param(block_path, 'CompiledSampleTime');
 S.CompiledPortDataTypes = get_param(block_path, 'CompiledPortDataTypes');
 S.CompiledPortDimensions = get_param(block_path, 'CompiledPortDimensions');
 S.CompiledPortWidths = get_param(block_path, 'CompiledPortWidths');
+S.Ports = get_param(block_path, 'Ports');
 
 end
 
