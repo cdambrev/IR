@@ -31,9 +31,5 @@ else
         end
     end
 end
-% Get rounding algorithm TODO : verifier utile
-if Constants.needs_zero_rounding(block_type)
-	S.RndMeth = 'Zero';
-end
 
 end

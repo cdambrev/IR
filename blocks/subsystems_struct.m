@@ -24,6 +24,7 @@ all_blocks = {};
 handle_struct_map = containers.Map('KeyType','double', 'ValueType','any');
 subsyst_blocks = {IRUtils.name_format(block_path)};
 
+% Recovery of all blocks/comments in the subsystem/block_diagram
 if is_subsystem && strcmp(get_param(block_path, 'Mask'), 'on') && ~strcmp(get_param(block_path, 'MaskType'), '')
     % Masked subsystems
     content = find_system(block_path, 'LookUnderMasks', 'all', 'FollowLinks', 'on', 'SearchDepth', '1');
@@ -49,22 +50,29 @@ for i=1:numel(content)
     all_blocks = [all_blocks, IRUtils.name_format(content(i))];
     [parent, sub_name, ~] = fileparts(content{i});
     sub_name = IRUtils.name_format(sub_name);
-    
     sub_type = get_param(content{i}, 'BlockType');
+    
+    % Common IR
     Common = common_struct(content{i});
+    
+    % Specific IR
     if strcmp(get_param(content{i}, 'Mask'), 'on')
-        mask_type = get_param(content{i}, 'MaskType');
         % masked subsystems
+        mask_type = get_param(content{i}, 'MaskType');
         SpecificParameters = specific_parameters_struct(content{i}, mask_type);
     elseif strcmp(sub_type, 'SubSystem')
-        mask_type = get_param(content{i}, 'MaskType');
+        % non masked subsystems
+        mask_type = get_param(content{i}, 'MaskType'); % All SubSystems must have a 'MaskType' Parameter, if not masked it is 'NONE'
         SpecificParameters = specific_parameters_struct(content{i}, sub_type);
     else
+        % other blocks
         SpecificParameters = specific_parameters_struct(content{i}, sub_type);
     end
     
     S.(sub_name) = catstruct(Common, SpecificParameters);
     handle_struct_map(get_param(content{i}, 'Handle')) = S.(sub_name);
+    
+    % Inner SubSystems/model struct
     if strcmp(sub_type, 'SubSystem') || strcmp(get_param(content{i}, 'Mask'), 'on')
         S.(sub_name).MaskType = mask_type;
         [S.(sub_name).Content, next_blocks, next_subsyst, handle_struct_map_next] = subsystems_struct(content{i}, true);
