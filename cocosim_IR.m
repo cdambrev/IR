@@ -28,7 +28,7 @@ ir_struct = struct();
 ir_struct.meta.file_path = simulink_model_path;
 
 % launch of the simulation of the model to get the compiled values.
-[~, file_name, ~] = fileparts(simulink_model_path);
+[parent, file_name, ~] = fileparts(simulink_model_path);
 try
     Cmd = [file_name, '([], [], [], ''compile'');'];
     eval(Cmd);
@@ -45,7 +45,7 @@ file_name_modif = IRUtils.name_format(file_name);
 
 %% Stop the simulation
 try
-    Cmd = [simulink_model_path, '([], [], [], ''term'');'];
+    Cmd = [file_name, '([], [], [], ''term'');'];
     eval(Cmd);
 catch
     %do nothing
@@ -61,7 +61,7 @@ json_model = strrep(json_model,'\/','/');
 if df_export
     file_json = [file_name '.json'];
     % Open or create the file
-    fid = fopen(file_json, 'w');
+    fid = fopen(fullfile(parent, file_json), 'w');
     % Write in the file
     fprintf(fid, '%s\n', json_model);
     fclose(fid);
