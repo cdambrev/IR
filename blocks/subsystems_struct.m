@@ -62,7 +62,7 @@ for i=1:numel(content)
         SpecificParameters = specific_parameters_struct(content{i}, mask_type);
     elseif strcmp(sub_type, 'SubSystem')
         % non masked subsystems
-        mask_type = get_param(content{i}, 'MaskType'); % All SubSystems must have a 'MaskType' Parameter, if not masked it is 'NONE'
+        mask_type = get_param(content{i}, 'MaskType'); % All SubSystems must have a 'MaskType' Parameter, if not masked it is ''
         SpecificParameters = specific_parameters_struct(content{i}, sub_type);
     else
         % other blocks
