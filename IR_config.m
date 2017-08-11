@@ -2,6 +2,8 @@
 % It helps to have a more refined internal representation
 % Only the specified parameters in the map for the specified BlockType
 % will be in the IR
+% You can also add common parameters in the 'CommonParameters's values at the end if you
+% want
 
 %% Default
 % If a BlockType doesn't appear in the map, by default, all (and only) the
@@ -12,6 +14,8 @@
 % (see the documentation for the list of specific parameters of a block,
 % you can do get_param(block_path, 'DialogParameters') to get all the
 % dialog parameters of a block)
+% If 'CommonParameters' doesn't appear in the map, only the basics one will
+% be in the IR (Name, BlockType, handle, LineHandles)
 
 %% Here are the list of the BlockTypes not in the map :
 % ZeroPole, Saturate, DiscreteStateSpace, UnitDelay, Memory,
@@ -30,6 +34,7 @@ global block_param_map;
 
 block_param_map = containers.Map();
 
+%% Add new specific parameters associated to a specific block here
 block_param_map('DiscreteIntegrator') = {'IntegratorMethod', 'gainval',...
     'ExternalReset', 'InitialConditionSource', 'InitialCondition',...
     'LimitOutput', 'LowerSaturationLimit','UpperSaturationLimit'};
@@ -58,3 +63,7 @@ block_param_map('TriggerPort') = {'ShowOutputPort', 'TriggerType'};
 block_param_map('ModelReference') = {'ModelNameDialog', 'ModelFile', 'ModelName', 'ParameterArgumentNames', 'ParameterArgumentValues',...
     'SimulationMode', 'CodeInterface', 'Variant', 'VariantControl', 'OverrideUsingVariant', 'ActiveVariant',...
     'GeneratePreprocessorConditionals', 'ProtectedModel', 'Variants', 'DefaultDataLogging'};
+
+%% Add common parameters here
+
+block_param_map('CommonParameters') = {'CompiledSampleTime', 'CompiledPortDataTypes', 'CompiledPortDimensions', 'CompiledPortWidths', 'CompiledPortComplexSignals', 'PortConnectivity', 'Ports', 'Position'};
