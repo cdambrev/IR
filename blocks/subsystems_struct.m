@@ -29,7 +29,7 @@ if is_subsystem && strcmp(get_param(block_path, 'Mask'), 'on') && ~strcmp(get_pa
     % Masked subsystems
     content = find_system(block_path, 'LookUnderMasks', 'all', 'FollowLinks', 'on', 'SearchDepth', '1');
     content(1) = []; %the first one is file_name, we already have it
-    comment = find_system(block_path, 'FindAll', 'on', 'Type', 'Annotation');
+    comment = find_system(block_path, 'FindAll', 'on', 'LookUnderMasks', 'all', 'Type', 'Annotation', 'SearchDepth', '1');
 else
     % subsystems not masked or block_diagram
     content = find_system(block_path, 'SearchDepth', '1');
@@ -49,7 +49,7 @@ end
 for i=1:numel(content)
     all_blocks = [all_blocks, IRUtils.name_format(content(i))];
     [parent, sub_name, ~] = fileparts(content{i});
-    sub_name = IRUtils.name_format(sub_name);
+    sub_name = IRUtils.name_format(sub_name); %modified name to be a valid field name
     sub_type = get_param(content{i}, 'BlockType');
     
     % Common IR
